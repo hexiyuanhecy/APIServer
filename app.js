@@ -11,7 +11,6 @@ var usersRouter = require('./routes/users');//用户接口
 var app = express();
 
 ///=======模板 开始===========//
-// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 ///=======模板 结束===========//

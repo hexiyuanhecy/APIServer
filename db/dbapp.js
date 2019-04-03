@@ -1,34 +1,42 @@
 var express = require("express");
 var $mysql   = require("mysql");
+var app =express();
 var sql = require("./DBConfig");       //   这句话是，引入当前目录的mysql模板   mysql就是我们上面创建的mysql.js
 var $sql = $mysql.createConnection(sql.mysql)       //创建一个连接        mysql是我们上面文件暴露出来的模板的方法
 $sql.connect()                          //运用了这句才是真正连接
 
-//查询
+//设置跨域访问
+app.all('*', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+    res.header("X-Powered-By",' 3.2.1');
+    res.header("Content-Type", "application/json;charset=utf-8");
+    next();
+});
 
+var result = {
+    "status": "200",
+    "message": "success", 
+}
 var school = "select * from school"   //假设我们数据表叫mono  *代表查询全部内容  select查询
 $sql.query(school,function(err,res){   //err提示错误信息  res是查询到的内容全在里面
   if(err){
-    console.log("错误",err)//我们打印出，错误信息  
+    throw err;
   }else {
-  console.log(res)      //打印出我们查询的内容
+    result.data=res;
   }
 });
 
-var dining_hall = "select * from dining_hall"   //假设我们数据表叫mono  *代表查询全部内容  select查询
-$sql.query(dining_hall,function(err,res){   //err提示错误信息  res是查询到的内容全在里面
-  if(err){
-    console.log("错误",err)//我们打印出，错误信息  
-  }else {
-  console.log(res)      //打印出我们查询的内容
-  }
+$sql.end();
+//写个接口123
+app.get('/123',function(req,res){
+    res.status(200),
+    res.json(result)
 });
-
-var user = "select * from user"   //假设我们数据表叫mono  *代表查询全部内容  select查询
-$sql.query(user,function(err,res){   //err提示错误信息  res是查询到的内容全在里面
-  if(err){
-    console.log("错误",err)//我们打印出，错误信息  
-  }else {
-  console.log(res)      //打印出我们查询的内容
-  }
-});
+//配置服务端口
+var server = app.listen(3001, function () {
+  var host = server.address().address;
+  var port = server.address().port;
+  console.log('Example app listening at http://%s:%s', host, port);
+})
