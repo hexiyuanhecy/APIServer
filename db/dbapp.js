@@ -19,7 +19,7 @@ var result = {
     "status": "200",
     "message": "success", 
 }
-var school = "select * from school"   //假设我们数据表叫mono  *代表查询全部内容  select查询
+var school = "select * from estimate"   //假设我们数据表叫mono  *代表查询全部内容  select查询
 $sql.query(school,function(err,res){   //err提示错误信息  res是查询到的内容全在里面
   if(err){
     throw err;
@@ -30,7 +30,7 @@ $sql.query(school,function(err,res){   //err提示错误信息  res是查询到�
 
 $sql.end();
 //写个接口123
-app.get('/123',function(req,res){
+app.get('/estimate',function(req,res){
     res.status(200),
     res.json(result)
 });
