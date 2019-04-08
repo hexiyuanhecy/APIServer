@@ -1,9 +1,8 @@
 var express = require("express");
-var $mysql   = require("mysql");
 var app =express();
-var sql = require("./DBConfig");       //   这句话是，引入当前目录的mysql模板   mysql就是我们上面创建的mysql.js
-var $sql = $mysql.createConnection(sql.mysql)       //创建一个连接        mysql是我们上面文件暴露出来的模板的方法
-$sql.connect()                          //运用了这句才是真正连接
+var pool = require("./DBConfig");       //   这句话是，引入当前目录的mysql模板   mysql就是我们上面创建的mysql.js
+     //创建一个连接        mysql是我们上面文件暴露出来的模板的方法
+pool.connect()                          //运用了这句才是真正连接
 
 //设置跨域访问
 app.all('*', function(req, res, next) {
@@ -20,17 +19,18 @@ var result = {
     "message": "success", 
 }
 var school = "select * from estimate"   //假设我们数据表叫mono  *代表查询全部内容  select查询
-$sql.query(school,function(err,res){   //err提示错误信息  res是查询到的内容全在里面
-  if(err){
-    throw err;
-  }else {
-    result.data=res;
-  }
-});
 
-$sql.end();
+
+pool.end();
 //写个接口123
 app.get('/estimate',function(req,res){
+  pool.query(school,function(err,res){   //err提示错误信息  res是查询到的内容全在里面
+    if(err){
+      throw err;
+    }else {
+      result.data=res;
+    }
+  });
     res.status(200),
     res.json(result)
 });
@@ -38,5 +38,6 @@ app.get('/estimate',function(req,res){
 var server = app.listen(3001, function () {
   var host = server.address().address;
   var port = server.address().port;
-  console.log('Example app listening at http://%s:%s', host, port);
+  console.log(`Example app listening at http://${host}:${port}`);
 })
+

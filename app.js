@@ -1,49 +1,42 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+//使用express构建服务器
+var express=require("express");
+var app=express();
+var bodyParser=require("body-parser");
+var pool = require("./routes/DBConfig");       //   这句话是，引入当前目录的mysql模板   mysql就是我们上面创建的mysql.js
+//创建一个连接        mysql是我们上面文件暴露出来的模板的方法
+var cors=require("cors")
+pool.connect() 
 
-/*=======路由信息 （接口地址）开始 存放在./routes目录下===========*/
-var indexRouter = require('./routes/index');//home page接口
-var usersRouter = require('./routes/users');//用户接口
-
-var app = express();
-
-///=======模板 开始===========//
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-///=======模板 结束===========//
-
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-///=======路由信息 （接口地址 介绍===========//
-/*定义一个路由的基本格式为：*/
-/* app.METHOD(PATH, HANDLER)
- *app 是express的实例
- method 是http请求方法
- handler 是在路由匹配时执行的函数*/
-app.use('/', indexRouter);//在app中注册indexRouter该接口 
-app.use('/users', usersRouter);//在app中注册usersRouter接口
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+//设置跨域访问
+app.all('*', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+  res.header("X-Powered-By",' 3.2.1');
+  res.header("Content-Type", "application/json;charset=utf-8");
+  next();
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+//引入路由模块
+var estimate=require("./routes/estimate");
+var dining_hall=require("./routes/dining_hall");
+var user=require("./routes/User");
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+app.listen(3001,()=>{
+    console.log("创建成功")
+})
 
-module.exports = app;
+app.use(cors({
+  origin:"http://localhost:8081",
+  credentials:true
+}))
+//托管静态资源
+app.use(express.static('./public'));
+app.use(bodyParser.urlencoded({
+    extended:false
+}))
+
+//使用路由器来管理路由
+app.use("/estimate",estimate);
+app.use("/dining_hall",dining_hall);
+app.use("/api",user);
