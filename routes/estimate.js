@@ -5,7 +5,7 @@ var pool = require("./DBConfig");
 router.get("/estimate",(req,res)=>{
     var sql=`select * from estimate es,user us where es.us_id = us.us_id ;`;
     pool.query(sql,(err,result)=>{
-        console.log(result)
+        // console.log(result)
         if(err) throw err;
         if(result.length>0){
             res.send({code:200,data:result})

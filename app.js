@@ -20,7 +20,7 @@ app.all('*', function(req, res, next) {
 //引入路由模块
 var estimate=require("./routes/estimate");
 var dining_hall=require("./routes/dining_hall");
-var user=require("./routes/User");
+var user=require("./routes/user");
 
 app.listen(3001,()=>{
     console.log("创建成功")
@@ -39,4 +39,4 @@ app.use(bodyParser.urlencoded({
 //使用路由器来管理路由
 app.use("/estimate",estimate);
 app.use("/dining_hall",dining_hall);
-app.use("/api",user);
+app.use("/user",user);
