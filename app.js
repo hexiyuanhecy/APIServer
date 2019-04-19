@@ -13,7 +13,7 @@ app.all('*', function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
   res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
   res.header("X-Powered-By",' 3.2.1');
-  res.header("Content-Type", "application/json;charset=utf-8");
+  // res.header("Content-Type", "application/json;charset=utf-8");
   next();
 });
 
@@ -27,14 +27,17 @@ app.listen(3001,()=>{
 })
 
 app.use(cors({
-  origin:"http://localhost:8081",
+  origin:"http://192.168.43.224:8081",
+  // origin:"http://10.202.44.234:8081",
   credentials:true
 }))
 //托管静态资源
-app.use(express.static('./public'));
+// app.use(express.static('./public'));
+app.use('/public',express.static('public'));//将文件设置成静态
 app.use(bodyParser.urlencoded({
     extended:false
 }))
+// app.set('192.168.137.1', process.env.PORT || 3000);
 
 //使用路由器来管理路由
 app.use("/estimate",estimate);

@@ -6,6 +6,7 @@ var pool = mysql.createConnection(
         user: 'root',       // 用户名
         password: '',       // 密码
         database: 'IXiaoPing',       // 数据库名 
+        // database: 'IXiaoPing_Edu',       // 数据库名 
         port: 3306          // 端口号（默认都是3306）
     }
 ) 
