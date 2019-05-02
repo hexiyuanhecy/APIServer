@@ -5,7 +5,11 @@ var bodyParser=require("body-parser");
 var pool = require("./routes/DBConfig");       //   这句话是，引入当前目录的mysql模板   mysql就是我们上面创建的mysql.js
 //创建一个连接        mysql是我们上面文件暴露出来的模板的方法
 var cors=require("cors")
-pool.connect() 
+pool.connect()
+
+var bodyParser = require('body-parser');
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}))
 
 //设置跨域访问
 app.all('*', function(req, res, next) {
