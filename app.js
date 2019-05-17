@@ -22,6 +22,7 @@ app.all('*', function(req, res, next) {
 });
 
 //引入路由模块
+var star=require("./routes/star");
 var gonglue=require("./routes/gonglue");
 var estimate=require("./routes/estimate");
 var dining_hall=require("./routes/dining_hall");
@@ -45,6 +46,7 @@ app.use(bodyParser.urlencoded({
 // app.set('192.168.137.1', process.env.PORT || 3000);
 
 //使用路由器来管理路由
+app.use("/star",star);
 app.use("/gonglue",gonglue);
 app.use("/estimate",estimate);
 app.use("/dining_hall",dining_hall);

@@ -3,13 +3,58 @@ var router = express.Router();
 var pool = require("./DBConfig"); 
 //获取评论
 router.get("/estimate",(req,res)=>{
-    var sql=`select * from estimate es,user us where es.us_id = us.us_id`;
+    var sql=`select * from estimate es,user us where es.us_id = us.us_id ORDER BY es_id DESC`;
     // var sql=`select * from estimate`;
     pool.query(sql,(err,result)=>{
         // console.log(result)
         if(err) throw err;
         if(result.length>0){
             res.send({code:200,data:result})
+        }else{
+            res.send({code:-1})
+        }
+    })
+})
+
+router.post("/user_estimate",(req,res)=>{
+    var {id} = req.body;
+    // console.log(id)
+    var sql=`select * from estimate where us_id=? ORDER BY es_date DESC`;
+    // var sql=`select * from estimate`;
+    pool.query(sql,[id],(err,result)=>{
+        // console.log(result)
+        if(err) throw err;
+        if(result.length>0){
+            res.send({code:200,data:result})
+        }else{
+            res.send({code:-1})
+        }
+    })
+})
+//获取评论
+router.post("/estimate/item",(req,res)=>{
+    var {id} = req.body;
+    var sql=`select * from estimate es,user us where es.us_id = us.us_id and es.es_id=?`;
+    var sql2=`select * from estimate_img where es_id=?`;
+    // console.log('评论id'+id)
+    // var sql=`select * from estimate`;
+    pool.query(sql,[id],(err,result)=>{
+        // console.log(result)
+        if(err) throw err;
+        if(result.length>0){
+            pool.query(sql2,[id],(err2,result2)=>{
+                // console.log(result)
+                if(err2) throw err2;
+                if(result2.length>0){
+                    // console.log('result2')
+                    // console.log(result2)
+                    // result.img = result2.data
+                    res.send({code:200,data:result,img:result2})
+                }else{
+                    res.send({code:-1})
+                }
+            })
+            // res.send({code:200,data:result})
         }else{
             res.send({code:-1})
         }
@@ -51,7 +96,7 @@ router.post("/submit_estimate",(req,res)=>{
         if(err) throw err;
 
         if(result.affectedRows>0){// 如果评论填入成功
-            console.log('评论填入成功')
+            // console.log('评论填入成功')
             var sql_es_id = `SELECT es_id FROM estimate ORDER BY es_id DESC LIMIT 1; `;
             var sql_es_imgs=`INSERT INTO estimate_img(es_id,es_img_path) VALUES(?,?)`;
             pool.query(sql_es_id,[es_content],(err,result1)=>{// 获取填入评论的es_id
@@ -59,12 +104,12 @@ router.post("/submit_estimate",(req,res)=>{
                 if(err) throw err;
 
                 if(es_id){ //获取es_id成功
-                    console.log('获取es_id成功')
+                    // console.log('获取es_id成功')
                     imgs.map(function(value,index) {
                         pool.query(sql_es_imgs,[es_id,value],(err,result2)=>{// 将评论图片一张张填入评论图片表
                             if(err) throw err;
                             if(result2.affectedRows>0){
-                                console.log('评论图片一张张填入评论图片表成功')
+                                // console.log('评论图片一张张填入评论图片表成功')
                                 if(index===imgs.length) res.send({code:200});
                                 // down = 1;
                             }else{
